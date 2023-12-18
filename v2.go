@@ -196,7 +196,7 @@ func start() {
 	fmt.Println(foundFiles)
 
 	if output != "" {
-		f, err := os.Create(output)
+		f, err := os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -204,24 +204,22 @@ func start() {
 		defer f.Close()
 
 		// Write active accounts to the output file
-		f.WriteString("########## Active Accounts ##########\n")
 		for _, account := range activeAccounts {
-			f.WriteString(account + "\n")
+			f.WriteString("bucket: " + account + "\n")
 		}
 
 		// Write active containers to the output file
-		f.WriteString("\n########## Active Containers ##########\n")
 		for _, container := range activeContainers {
-			f.WriteString(container + "\n")
+			f.WriteString("url: " + container + "\n")
 		}
 
 		// Write found files to the output file
-		f.WriteString("\n########## Files Found ##########\n")
 		for _, file := range foundFiles {
-			f.WriteString(file + "\n")
+			f.WriteString("data: " + file + "\n")
 		}
 	}
 }
+
 func main() {
 	flag.StringVar(&base, "b", "", "The URL to check.")
 	flag.StringVar(&wordlist, "w", "", "The wordlist for permutation. By default, it will use perm.txt.")
